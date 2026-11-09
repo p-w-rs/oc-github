@@ -11,8 +11,8 @@ org/SSO discovery, generated SSH keys, per-command credentials, command
 classification, permissions, the GUI (Review pane via `/github` or the + menu,
 and Settings → GitHub) and encrypted export/import work. Tested against real
 github.com with an SSO organization (sign-in, API, HTTPS git) and against real
-OpenCode 2.2.6 with a fake GitHub (CLI smoke from checkout and snapshot,
-Desktop GUI).
+OpenCode 2.2.6 with a fake GitHub: CLI smoke from checkout and snapshot on
+macOS and Ubuntu 24.04 arm64, Desktop GUI on macOS.
 
 ## The GitHub view (you)
 
