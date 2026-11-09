@@ -8,14 +8,15 @@ import { GitHubService } from "../plugin/service.ts"
 const args = process.argv.slice(2)
 const id = args.find(arg => !arg.startsWith("--") && args[args.indexOf(arg) - 1]?.startsWith("--") !== true)
 const option = name => { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined }
-if (!id) { console.error("Usage: pixi run signin <account> [--client-id <id>] [--host <host>]"); process.exit(2) }
+if (!id) { console.error("Usage: pixi run signin <account> [--transport https|ssh|none] [--client-id <id>] [--host <host>]"); process.exit(2) }
 
 const service = await GitHubService.open(pluginDataDir("oc-github", process.env.OC_GITHUB_DATA_DIR || undefined))
 service.attach(new PermissionBridge({ plugin: "oc-github", policy: service.policy, fallback: defaultEffect, root: async s => s }))
 let account = await service.store.get(id)
-if (!account || option("--client-id") || option("--host")) {
+if (!account || option("--client-id") || option("--host") || option("--transport")) {
   account = await service.store.put(normalizeAccount({
     ...(account ?? { id, transport: "https", auth: "browser" }),
+    ...(option("--transport") && { transport: option("--transport") }),
     ...(option("--client-id") && { clientId: option("--client-id") }), ...(option("--host") && { host: option("--host") }),
   }))
   console.log(`Account ${id}: ${account.host}, git over ${account.transport}, ${account.auth} sign-in${account.clientId ? `, app ${account.clientId}` : ""}`)

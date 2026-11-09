@@ -1,7 +1,9 @@
 import type { Plugin } from "@opencode/plugin"
 import { isAbsolute, resolve } from "node:path"
 import { installRedaction, PermissionBridge, pluginDataDir, SECURE_KIT_VERSION, sessionRoots, ShellSupplier, type PermissionHost } from "oc-secure-kit"
+import { createAdmin } from "./admin.js"
 import type { Endpoints } from "./github.js"
+import { GitHubRpc } from "./rpc.js"
 import { defaultEffect, parentEntity } from "./model.js"
 import { GitHubService, PLUGIN_ID } from "./service.js"
 import { createTools, TOOL_NAMES } from "./tools.js"
@@ -69,6 +71,14 @@ export function createPlugin(): Plugin.Plugin {
           reloading ??= Promise.resolve().then(() => ctx.tool.reload()).catch(error => warn("tool reload failed", error)).finally(() => { reloading = undefined })
         }) })
         registrations.push(await installRedaction(ctx.tool as never, service.redactor, new Set<string>(TOOL_NAMES), error => warn("redaction skipped", error)))
+
+        // GUI only: permissions, sign-in, tokens, export/import. Never exposed as agent tools.
+        const admin = createAdmin({
+          service, root,
+          agents: async () => ((await ctx.agent.list()).data ?? []).filter(agent => !agent.hidden).map(agent => ({ id: agent.id as string, name: agent.name, mode: agent.mode })),
+        })
+        const handlers = Object.fromEntries(Object.keys(GitHubRpc.methods).map(name => [name, async (input: unknown) => (admin as Record<string, (input: never) => Promise<unknown>>)[name]!(input as never)]))
+        registrations.push(await ctx.rpc.register(GitHubRpc, handlers as never))
 
         // Credentials for git/gh commands matched to an account. Every other command is untouched.
         const directories = new Map<string, string>()

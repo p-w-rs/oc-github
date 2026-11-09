@@ -75,6 +75,7 @@ export async function startFakeGitHub(options: { login: string; token: string; o
     if (/\.git\//.test(url.pathname)) return git(req, res, url)
     for await (const chunk of req) chunks.push(chunk as Buffer)
     const body = Buffer.concat(chunks).toString()
+    if (url.pathname === "/__approve") { approved = true; return send(res, 200, { approved }) }
     if (url.pathname === "/login/device/code") return send(res, 200, { device_code: "device-123", user_code: "ABCD-1234", verification_uri: `http://${host}/login/device`, expires_in: 900, interval: 1 })
     if (url.pathname === "/login/oauth/access_token") {
       const form = new URLSearchParams(body)

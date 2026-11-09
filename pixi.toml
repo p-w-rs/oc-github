@@ -26,3 +26,6 @@ rollback = { cmd = "node scripts/install.mjs --rollback", depends-on = ["deps"] 
 install-status = { cmd = "node scripts/install.mjs --status", depends-on = ["deps"] }
 signin = { cmd = "node --import tsx scripts/signin.mjs", depends-on = ["deps"] }
 token-set = { cmd = "node --import tsx scripts/token-set.mjs", depends-on = ["deps"] }
+desktop-dev = { cmd = "node --import tsx scripts/desktop-dev.mjs", depends-on = ["build"] }
+smoke-host = { cmd = "node --import tsx scripts/smoke-host.mjs", depends-on = ["build"] }
+smoke-snapshot = { cmd = "node --import tsx scripts/smoke-host.mjs --snapshot", depends-on = ["build"] }

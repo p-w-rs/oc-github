@@ -73,6 +73,8 @@ async function host(reply: "approve" | "reject" = "approve", options: Record<str
     },
     shell: { hook: async (_: string, callback: any) => registration(hooks.shell, callback) },
     event: { subscribe: () => (async function* () {})() },
+    agent: { list: async () => ({ data: [{ id: "build", name: "build", mode: "primary", hidden: false }] }) },
+    rpc: { register: async () => ({ dispose: async () => {} }) },
   }
   const cleanup = await createPlugin().setup(ctx as unknown as Plugin.Context) as () => Promise<void>
   let n = 0

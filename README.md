@@ -6,10 +6,26 @@ and `gh` commands in its own shell and the right account's credentials are
 supplied to that one command after a permission check. macOS and Linux;
 OpenCode 2.2.6+ and Pixi.
 
-**Status: milestone 1.** Accounts, browser sign-in (device flow), tokens,
+**Status: milestone 2.** Accounts, browser sign-in (device flow), tokens,
 org/SSO discovery, generated SSH keys, per-command credentials, command
-classification and permissions work. The Review-pane GUI, export/import and a
-real-OpenCode smoke test come next.
+classification, permissions, the GUI (Review pane via `/github` or the + menu,
+and Settings → GitHub) and encrypted export/import work. Tested against real
+github.com with an SSO organization (sign-in, API, HTTPS git) and against real
+OpenCode 2.2.6 with a fake GitHub (CLI smoke from checkout and snapshot,
+Desktop GUI).
+
+## The GitHub view (you)
+
+- **Add account** (name, host, git transport, login type) and **Sign in**:
+  shows the code with **Copy and open GitHub**; it completes on its own.
+- Per account: who it is signed in as, **Refresh orgs**, **Sign out**,
+  **Enter token** (token accounts), remove; its orgs with role and SSO status
+  (**Authorize** opens GitHub's SSO page when needed).
+- **Permissions for** the whole account or one org/owner, grouped (Git, Pull
+  requests, Issues & releases, Repo admin, Org & account); rows Any agent,
+  agents with their own settings (or all), This session.
+- **Pick account from repo** on/off; **Export/Import** (accounts, permissions,
+  logins and SSH keys in a passphrase-encrypted file; orgs are re-discovered).
 
 ## Accounts vs orgs
 
@@ -48,7 +64,8 @@ api-other and remove, which ask. All of it is editable (GUI next milestone);
 ## Signing in from a terminal
 
 ```sh
-pixi run signin work                     # creates the account if needed, prints a code, waits
+pixi run signin work                     # creates the account if needed (https), prints a code, waits
+pixi run signin personal --transport ssh # an account that uses SSH for git
 pixi run signin work --client-id <id>    # if your org approved a different OAuth app
 pixi run token-set personal              # paste a token for an auth=token account
 ```
@@ -60,5 +77,8 @@ it; ask them to approve the app, or use another app's `clientId`.
 ## Development
 
 ```sh
-pixi run --locked test   # fake GitHub (device flow, API, SSO headers, git http-backend) + a real local sshd
+pixi run --locked test            # fake GitHub (device flow, API, SSO headers, git http-backend) + a real local sshd
+pixi run --locked smoke-host      # real OpenCode 2.2.6 CLI, scripted model, fake GitHub
+pixi run --locked smoke-snapshot  # same, from an installed snapshot
+pixi run desktop-dev start        # isolated OpenCode Desktop with a fake GitHub (approve: curl http://<host>/__approve)
 ```
