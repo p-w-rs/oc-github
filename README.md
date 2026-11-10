@@ -6,7 +6,7 @@ and `gh` commands in its own shell and the right account's credentials are
 supplied to that one command after a permission check. macOS and Linux;
 OpenCode 2.2.6+ and Pixi.
 
-**Status: milestone 2.** Accounts, browser sign-in (device flow), tokens,
+**Status:** accounts, browser sign-in (device flow), tokens,
 org/SSO discovery, generated SSH keys, per-command credentials, command
 classification, permissions, the GUI (Review pane via `/github` or the + menu,
 and Settings → GitHub) and encrypted export/import work. Tested against real
@@ -60,6 +60,27 @@ account-settings, gists, packages, api-other, manage, remove. Defaults allow
 everything except force-push, repo-delete, repo-settings, secrets, org-admin,
 api-other and remove, which ask. All of it is editable (GUI next milestone);
 **Allow always** on a prompt writes allow.
+
+## Install
+
+Requires [OpenCode](https://opencode.ai) 2.2.6+ (CLI or Desktop) and [Pixi](https://pixi.sh); macOS or Linux.
+
+```sh
+git clone https://github.com/p-w-rs/oc-github.git && cd oc-github
+pixi run --locked install          # runs the tests, then installs a verified snapshot into your OpenCode config
+```
+
+Restart OpenCode (or `/reload`). Then open **Settings → GitHub** (or `/github` in a session) and add an account, or from a terminal: `pixi run signin work`.
+Agents can also set things up for you when you ask.
+
+```sh
+pixi run --locked install-status   # what is installed, and whether its files are intact
+pixi run --locked rollback         # back to the previous snapshot
+pixi run --locked uninstall        # removes only this plugin's entry; your data stays
+```
+
+Updating: `git pull && pixi run --locked install`. Accounts, sign-ins and permissions live in
+`~/.local/share/oc-github` and survive updates; move them between computers with **Export** / **Import** in the view.
 
 ## Signing in from a terminal
 

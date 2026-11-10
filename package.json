@@ -1,10 +1,18 @@
 {
   "name": "oc-github",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
   "description": "GitHub accounts for OpenCode: per-command credentials for git and gh, orgs, and per-account permissions",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p-w-rs/oc-github.git"
+  },
+  "homepage": "https://github.com/p-w-rs/oc-github#readme",
+  "bugs": {
+    "url": "https://github.com/p-w-rs/oc-github/issues"
+  },
   "exports": {
     ".": "./plugin/index.ts",
     "./gui-experimental": "./dist/gui-experimental.cjs"
@@ -39,7 +47,7 @@
   },
   "dependencies": {
     "jsonc-parser": "3.3.1",
-    "oc-secure-kit": "file:vendor/oc-secure-kit-0.5.1.tgz"
+    "oc-secure-kit": "file:vendor/oc-secure-kit-1.0.0.tgz"
   },
   "devDependencies": {
     "@opencode/plugin": "2.2.6",
