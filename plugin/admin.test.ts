@@ -13,14 +13,20 @@ import { startFakeGitHub, type FakeGitHub } from "./testgithub.js"
 const TOKEN = "gho_adminTestToken_abcdef0123456789"
 const PASS = "export passphrase 123"
 const dirs: string[] = []
+const services: { dispose(): unknown }[] = []
 let github: FakeGitHub
 before(async () => { github = await startFakeGitHub({ login: "jdoe", token: TOKEN, orgs: ["acme"], ssoBlocked: ["locked-org"] }) })
-after(async () => { await github.stop(); await Promise.all(dirs.map(dir => rm(dir, { recursive: true, force: true }))) })
+after(async () => {
+  await Promise.allSettled(services.map(async service => service.dispose()))
+  await github.stop()
+  await Promise.all(dirs.map(dir => rm(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })))
+})
 
 async function setup() {
   const dir = await mkdtemp(join(tmpdir(), "ocg-admin-"))
   dirs.push(dir)
   const service = await GitHubService.open(dir, host => host === github.host ? { web: github.web, api: github.api } : undefined)
+  services.push(service)
   const root = async (id: string) => id === "child" ? "root" : id
   service.attach(new PermissionBridge({ plugin: PLUGIN_ID, policy: service.policy, fallback: defaultEffect, parent: parentEntity, root }))
   const admin = createAdmin({ service, root, cost: { N: 2 ** 12, r: 8, p: 1 }, agents: async () => [{ id: "build", name: "build", mode: "primary" }] })
